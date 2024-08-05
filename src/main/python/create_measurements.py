@@ -31,7 +31,9 @@ def check_args(file_args):
         if len(file_args) != 2 or int(file_args[1]) <= 0:
             raise Exception()
     except:
-        print("Usage:  create_measurements.sh <positive integer number of records to create>")
+        print(
+            "Usage:  create_measurements.sh <positive integer number of records to create>"
+        )
         print("        You can use underscore notation for large number of records.")
         print("        For example:  1_000_000_000 for one billion")
         exit()
@@ -42,13 +44,13 @@ def build_weather_station_name_list():
     Grabs the weather station names from example data provided in repo and dedups
     """
     station_names = []
-    with open('../../../data/weather_stations.csv', 'r') as file:
+    with open("./weather_stations.csv", "r") as file:
         file_contents = file.read()
     for station in file_contents.splitlines():
         if "#" in station:
             next
         else:
-            station_names.append(station.split(';')[0])
+            station_names.append(station.split(";")[0])
     return list(set(station_names))
 
 
@@ -56,7 +58,7 @@ def convert_bytes(num):
     """
     Convert bytes to a human-readable format (e.g., KiB, MiB, GiB)
     """
-    for x in ['bytes', 'KiB', 'MiB', 'GiB']:
+    for x in ["bytes", "KiB", "MiB", "GiB"]:
         if num < 1024.0:
             return "%3.1f %s" % (num, x)
         num /= 1024.0
@@ -106,36 +108,41 @@ def build_test_data(weather_station_names, num_rows_to_create):
     coldest_temp = -99.9
     hottest_temp = 99.9
     station_names_10k_max = random.choices(weather_station_names, k=10_000)
-    batch_size = 10000 # instead of writing line by line to file, process a batch of stations and put it to disk
+    batch_size = 10000  # instead of writing line by line to file, process a batch of stations and put it to disk
     chunks = num_rows_to_create // batch_size
-    print('Building test data...')
+    print("Building test data...")
 
     try:
-        with open("../../../data/measurements.txt", 'w') as file:
+        with open("../../../data/measurements.txt", "w") as file:
             progress = 0
             for chunk in range(chunks):
-                
+
                 batch = random.choices(station_names_10k_max, k=batch_size)
-                prepped_deviated_batch = '\n'.join([f"{station};{random.uniform(coldest_temp, hottest_temp):.1f}" for station in batch]) # :.1f should quicker than round on a large scale, because round utilizes mathematical operation
-                file.write(prepped_deviated_batch + '\n')
-                
+                prepped_deviated_batch = "\n".join(
+                    [
+                        f"{station};{random.uniform(coldest_temp, hottest_temp):.1f}"
+                        for station in batch
+                    ]
+                )  # :.1f should quicker than round on a large scale, because round utilizes mathematical operation
+                file.write(prepped_deviated_batch + "\n")
+
                 # Update progress bar every 1%
                 if (chunk + 1) * 100 // chunks != progress:
                     progress = (chunk + 1) * 100 // chunks
-                    bars = '=' * (progress // 2)
+                    bars = "=" * (progress // 2)
                     sys.stdout.write(f"\r[{bars:<50}] {progress}%")
                     sys.stdout.flush()
-        sys.stdout.write('\n')
+        sys.stdout.write("\n")
     except Exception as e:
         print("Something went wrong. Printing error info and exiting...")
         print(e)
         exit()
-    
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     file_size = os.path.getsize("../../../data/measurements.txt")
     human_file_size = convert_bytes(file_size)
- 
+
     print("Test data successfully written to 1brc/data/measurements.txt")
     print(f"Actual file size:  {human_file_size}")
     print(f"Elapsed time: {format_elapsed_time(elapsed_time)}")
