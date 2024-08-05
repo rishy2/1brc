@@ -1,5 +1,7 @@
 #Maven
 target/
+data/
+data/*
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -48,4 +50,3 @@ out/
 out_expected.txt
 /*-timing.json
 
-data/*
