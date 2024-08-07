@@ -7,14 +7,20 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"time"
 )
 
 var measurementsMap = make(map[string][4]float64)
-var fileToRead = "../../../test/resources/samples/measurements-3.txt"
-var measurementsFile = "../../../../data/measurements.txt"
+
+// var fileToRead = "../../../test/resources/samples/measurements-3.txt"
+
+var fileToRead2 = "../../../test/resources/samples/measurements-10000-unique-keys.txt"
+
+// var measurementsFile = "../../../../data/measurements.txt"
 
 func main() {
-	file, err := os.Open(fileToRead)
+	start := time.Now()
+	file, err := os.Open(fileToRead2)
 
 	if err != nil {
 		log.Fatal("Error opening file", err)
@@ -54,6 +60,7 @@ func main() {
 	}
 	out = out[:len(out)-2] + "}"
 	fmt.Println(out)
+	fmt.Println("Time taken:", time.Since(start))
 }
 
 func RoundUp(num float64) float64 {
