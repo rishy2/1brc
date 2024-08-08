@@ -16,13 +16,13 @@ import (
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 
-var measurementsMap = make(map[string][4]float64)
+var measurementsMap = make(map[string]*[4]float64)
 
 // var fileToRead = "../../../test/resources/samples/measurements-3.txt"
 
-var fileToRead2 = "../../../test/resources/samples/measurements-10000-unique-keys.txt"
+// var fileToRead2 = "../../../test/resources/samples/measurements-10000-unique-keys.txt"
 
-// var measurementsFile = "../../../../data/measurements.txt"
+var measurementsFile = "../../../../data/measurements.txt"
 
 func main() {
 
@@ -40,7 +40,7 @@ func main() {
 	}
 
 	start := time.Now()
-	file, err := os.Open(fileToRead2)
+	file, err := os.Open(measurementsFile) // 15GB into memory :skull: use buffers instead
 
 	if err != nil {
 		log.Fatal("Error opening file", err)
@@ -67,10 +67,9 @@ func main() {
 			val[2] += measurement
 			val[1] = max(val[1], measurement)
 			val[0] = min(val[0], measurement)
-			measurementsMap[station] = val // can we modify in place?
 		} else {
 			// [min, max, sum, count]
-			measurementsMap[station] = [4]float64{measurement, measurement, measurement, 1}
+			measurementsMap[station] = &[4]float64{measurement, measurement, measurement, 1}
 		}
 	}
 
